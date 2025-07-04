@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Analytics</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .chart-container {
+      width: 80%;
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Employee Analytics Dashboard</h1>
+
+  <div class="chart-container">
+    <h2>Employees per Department</h2>
+    <canvas id="employeesPerDeptChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Monthly Attendance Overview</h2>
+    <canvas id="monthlyAttendanceChart"></canvas>
+  </div>
+
+  <script>
+    const empDeptData = {{ employees_per_department_data|safe }};
+    const attendData = {{ monthly_attendance_data|safe }};
+
+    const ctx1 = document.getElementById('employeesPerDeptChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'pie',
+      data: {
+        labels: empDeptData.labels,
+        datasets: [{
+          data: empDeptData.values,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    const ctx2 = document.getElementById('monthlyAttendanceChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: attendData.labels,
+        datasets: [{
+          label: 'Present Days',
+          data: attendData.present_counts,
+          borderWidth: 1
+        }, {
+          label: 'Absent Days',
+          data: attendData.absent_counts,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
